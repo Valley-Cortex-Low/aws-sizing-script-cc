@@ -87,15 +87,13 @@ fi
 oldest_bytes=$(echo "$sorted_data" | jq -r '.[0].Maximum')
 newest_bytes=$(echo "$sorted_data" | jq -r '.[-1].Maximum')
 
-# Calculate the difference in bytes
-byte_growth=$((newest_bytes - oldest_bytes))
+# CloudWatch sometimes returns floats (decimals). Bash can't do float math, so we use awk.
+byte_growth=$(awk "BEGIN { print $newest_bytes - $oldest_bytes }")
 
-# Ensure growth isn't negative (e.g., if they deleted a bunch of old logs)
-if [ "$byte_growth" -lt 0 ]; then
-    byte_growth=0
-fi
+# Ensure growth isn't negative (e.g., if they deleted a bunch of old logs) using awk
+byte_growth=$(awk "BEGIN { if ($byte_growth < 0) print 0; else print $byte_growth }")
 
-# Convert bytes to GB and calculate daily average using awk for floating point math
+# Convert bytes to GB and calculate daily average using awk
 TOTAL_GB_GROWTH=$(awk "BEGIN {printf \"%.3f\", $byte_growth / 1024 / 1024 / 1024}")
 GB_PER_DAY=$(awk "BEGIN {printf \"%.3f\", $TOTAL_GB_GROWTH / $DAYS}")
 
