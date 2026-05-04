@@ -7,4 +7,4 @@ To calculate the estimated GB/day for a centralized log bucket, run this command
 **Note:** Replace `<bucket-name>` and `<region>` with your actual log bucket details.
 
 ```bash
-wget -qO aws-log-ingest.sh https://raw.githubusercontent.com/Valley-Cortex-Low/aws-sizing-script-cc/main/log-ingest/aws-log-ingest.sh && chmod +x aws-log-ingest.sh && ./aws-log-ingest.sh -b <bucket-name> -n <region>
+wget -qO aws-log-ingest.sh https://raw.githubusercontent.com/Valley-Cortex-Low/aws-sizing-script-cc/main/log-ingest/aws-log-ingest.sh && chmod +x aws-log-ingest.sh && ./aws-log-ingest.sh
