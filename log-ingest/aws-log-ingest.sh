@@ -6,11 +6,11 @@ BUCKET=""
 REGION=""
 
 function printHelp {
-    echo "Usage: ./aws-ingest-estimator.sh -b <bucket-name> -n <region> [-d <days>]"
+    echo "Usage: ./aws-log-ingest.sh [-b <bucket-name>] [-n <region>] [-d <days>]"
     echo ""
     echo "Flags:"
-    echo " -b <bucket-name>   (Required) The exact name of the S3 log bucket"
-    echo " -n <region>        (Required) The AWS region where the bucket resides (e.g., us-east-1)"
+    echo " -b <bucket-name>   The exact name of the S3 log bucket"
+    echo " -n <region>        The AWS region where the bucket resides (e.g., us-east-1)"
     echo " -d <days>          (Optional) Number of days to average (default: 7)"
     echo " -h                 Display help info"
     exit 1
@@ -32,9 +32,22 @@ while getopts "b:n:d:h" opt; do
   esac
 done
 
+# Interactively prompt if bucket is missing
+if [ -z "$BUCKET" ]; then
+    echo ""
+    read -p "Enter the exact name of your S3 log bucket: " BUCKET
+fi
+
+# Interactively prompt if region is missing
+if [ -z "$REGION" ]; then
+    read -p "Enter the AWS region where the bucket resides (e.g., us-east-1): " REGION
+    echo ""
+fi
+
+# Final safety check
 if [ -z "$BUCKET" ] || [ -z "$REGION" ]; then
-    echo "Error: Both Bucket (-b) and Region (-n) are required."
-    printHelp
+    echo "Error: Both Bucket and Region are required to proceed."
+    exit 1
 fi
 
 echo "Fetching CloudWatch metrics for bucket: $BUCKET"
